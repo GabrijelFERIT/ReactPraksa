@@ -1,0 +1,289 @@
+/* Centriranje i osnova aplikacije */
+.appConatiner {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.crud-container {
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+h1 {
+  margin-top: 0;
+  color: black;
+  font-size: 28px;
+  font-weight: 900;
+  text-transform: uppercase;
+  border-bottom: 3px solid black;
+  padding-bottom: 10px;
+}
+
+/* Gumb za otvaranje modala */
+.btn-add {
+  background-color: black;
+  color: white;
+  border: 2px solid black;
+  padding: 12px 24px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 25px;
+  transition: all 0.2s ease;
+}
+
+.btn-add:hover {
+  background-color: #333;
+}
+
+/* --- ROBUSNA TABLICA S JAKIM CRNIM LINIJAMA --- */
+.device-table {
+  width: 100%;
+  border-collapse: collapse; /* Spaja duple linije u jednu oštru liniju */
+  margin-top: 10px;
+  background-color: white;
+}
+
+/* Debeli crni rubovi za tablicu, zaglavlja i sve ćelije */
+.device-table, 
+.device-table th, 
+.device-table td {
+  border: 2px solid black; 
+}
+
+/* Razmak unutar svih ćelija */
+.device-table th, 
+.device-table td {
+  padding: 14px 18px;
+  text-align: left;
+  color: black; /* Osigurava da je tekst unutar ćelija maksimalno crn */
+  font-size: 15px;
+}
+
+/* PURE BLACK ZAGLAVLJE S BIJELIM TEKSTOM (Maksimalan kontrast) */
+.device-table th {
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+/* Zebra uzorak - alternira između čiste bijele i vrlo blage sive za lakše čitanje, tekst ostaje crn */
+.device-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Redak lagano posvijetli kad se prođe mišem radi vizualnog feedbacka */
+.device-table tbody tr:hover {
+  background-color: #e6e6e6; 
+}
+
+.name-cell {
+  font-weight: 600;
+}
+
+.price-cell {
+  font-weight: bold;
+}
+
+.quantity-cell {
+  font-style: italic;
+}
+
+/* --- POP-UP MODAL STILOVI --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Tamnija pozadina iza modala za bolji fokus */
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+
+/* Bijeli prozor s jakim crnim rubom */
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border: 3px solid black;
+  border-radius: 0px; /* Oštri rubovi za industrijski look */
+  width: 380px;
+  position: relative;
+  box-shadow: 10px 10px 0px rgba(0, 0, 0, 1); /* Retro, jaki crni shadow */
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  text-transform: uppercase;
+  font-weight: 900;
+  border-bottom: 2px solid black;
+  padding-bottom: 5px;
+}
+
+.close-btn {
+  position: absolute; top: 12px; right: 18px;
+  font-size: 28px; font-weight: bold; cursor: pointer;
+  color: black;
+}
+
+.close-btn:hover {
+  color: red;
+}
+
+.form-group { 
+  margin-bottom: 15px; 
+}
+
+.form-group label { 
+  display: block; 
+  font-weight: bold; 
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+/* Unosna polja s jasnim crnim rubom i crnim tekstom */
+.form-group input { 
+  width: 94%; 
+  padding: 10px; 
+  border: 2px solid black; 
+  font-size: 14px;
+  color: black;
+  background-color: white;
+}
+
+/* Gumb unutar modala: Crna pozadina, bijeli tekst */
+.btn-save {
+  background-color: black; 
+  color: white;
+  border: 2px solid black; 
+  padding: 12px;
+  width: 100%; 
+  font-weight: bold; 
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s;
+}
+
+.btn-save:hover { 
+  background-color: #333; 
+}
+
+
+/* --- STILOVI ZA GUMBE UNUTAR TABLICE --- */
+
+/* Zajednički stil za oba gumba u tablici */
+.btn-table-edit, 
+.btn-table-delete {
+  background-color: white;
+  color: black;
+  border: 2px solid black; /* Debele crne linije */
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: all 0.15s ease;
+}
+
+/* Uredi gumb - Hover efekt (Inverzija boja) */
+.btn-table-edit:hover {
+  background-color: black;
+  color: white;
+}
+
+/* Obriši gumb - Hover efekt (Crveno upozorenje) */
+.btn-table-delete:hover {
+  background-color: #ff4d4d;
+  color: white;
+  border-color: #ff4d4d;
+}
+
+/* Osiguraj da stupac s akcijama bude fiksne širine kako se gumbi ne bi lomili */
+.device-table th:last-child, 
+.device-table td:last-child {
+  width: 160px;
+  text-align: center;
+}
+
+/* --- STILOVI ZA GUMBE UNUTAR TABLICE --- */
+
+/* Zajednički stil za oba gumba u tablici */
+.btn-table-edit, 
+.btn-table-delete {
+  background-color: white;
+  color: black;
+  border: 2px solid black; /* Debele crne linije */
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: all 0.15s ease;
+}
+
+/* Uredi gumb - Hover efekt (Inverzija boja) */
+.btn-table-edit:hover {
+  background-color: black;
+  color: white;
+}
+
+/* Obriši gumb - Hover efekt (Crveno upozorenje) */
+.btn-table-delete:hover {
+  background-color: #ff4d4d;
+  color: white;
+  border-color: #ff4d4d;
+}
+
+/* Osiguraj da stupac s akcijama bude fiksne širine kako se gumbi ne bi lomili */
+.device-table th:last-child, 
+.device-table td:last-child {
+  width: 160px;
+  text-align: center;
+}
+
+
+/* Ćelija u kojoj se nalaze gumbi za akciju */
+.actions-cell {
+  text-align: center;
+  width: 180px; /* Fiksna širina da gumbi uvijek stoje uredno u redu */
+}
+
+/* Zajednički stil za Edit i Delete gumbe u tablici */
+.btn-table-edit, 
+.btn-table-delete {
+  background-color: white;
+  color: black;
+  border: 2px solid black; /* Debele crne linije */
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: all 0.15s ease;
+}
+
+/* Zadnji gumb (Delete) ne treba desnu marginu */
+.btn-table-delete {
+  margin-right: 0;
+}
+
+/* Edit gumb - Hover efekt (Čista inverzija boja) */
+.btn-table-edit:hover {
+  background-color: black;
+  color: white;
+}
+
+/* Delete gumb - Hover efekt (Agresivni crveni kontrast za brisanje) */
+.btn-table-delete:hover {
+  background-color: #ff4d4d;
+  color: white;
+  border-color: #ff4d4d;
+}
