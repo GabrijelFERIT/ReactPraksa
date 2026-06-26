@@ -4,14 +4,21 @@ import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import HomePage from "./Pages/HomePage"
 import './App.css'
+import ElectronicsListCRUD from "./features/products/ElectronicsUI"
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className='appConatiner'>
-      <HomePage/>
-    </div>
+    <BrowserRouter>
+      <div className='appConatiner'>
+        <Routes>
+          <Route path = "/" element={<HomePage/>}></Route>
+          <Route path = "/electronics" element={<ElectronicsListCRUD/>}></Route>
+        </Routes>
+      </div>
+    </BrowserRouter>
   )
 }
 

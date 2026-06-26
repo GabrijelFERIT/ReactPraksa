@@ -1,141 +1,200 @@
 import { useState, useEffect } from "react";
+import api from "../../api.js";
 
+function ElectronicsListCRUD() {
+    const [devices, setDevices] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editId, setEditId] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-function ElectronicsListCRUD(){
-    const [devices, setDevices] = useState(() => {
-        const data = localStorage.getItem("storeDevices");
-        return data ? JSON.parse(data) : [];
+    
+    const [deviceName, setDeviceName] = useState("");
+    const [deviceDescription, setDeviceDescription] = useState(""); 
+    const [devicePrice, setDevicePrice] = useState(0);
+
+    const [users, setUsers] = useState([]); 
+    const [selectedUserId, setSelectedUserId] = useState('');
+    
+const fetchUsers = async () => {
+    try {
+        const response = await api.get("/User");
+        setUsers(response.data);
+    } catch (error) {
+        console.error("Error fetching users:", error);
     }
-);
+};
 
-const [isModalOpen, setIsModalOpen] = useState(false);
-const [deviceName, setDeviceName] = useState("");
-const [deviceQuantity, setDeviceQuantity] = useState(0);
-const [devicePrice, setDevicePrice] = useState(0);
-const [editId, setEditId] = useState(null);
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const response = await api.get("/Article");
+            setDevices(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-useEffect(() => {
-    localStorage.setItem("storeDevices", JSON.stringify(devices));
-    }, [devices]
-);
+    useEffect(() => {
+        fetchData();
+        fetchUsers();
+    }, []);
 
-const closeModal = () => {
+    const closeModal = () => {
         setIsModalOpen(false);
         setEditId(null);
         setDeviceName("");
-        setDeviceQuantity(0);
+        setDeviceDescription("");
         setDevicePrice(0);
+        setSelectedUserId('');
     };
 
-    const startEdit = (device) => {
-        setEditId(device.id);
-        setDeviceName(device.name);
-        setDeviceQuantity(device.quantity);
-        setDevicePrice(device.price);
-        setIsModalOpen(true); 
-    };
+const startEdit = (device) => {
+            
+            setEditId(device.id); 
+            setDeviceName(device.Name || device.name || "");
+            setDeviceDescription(device.description || "");
+            setDevicePrice(device.currentPrice || 0);
+            setIsModalOpen(true); 
+            setSelectedUserId(device.UserId || device.userId || '');
+};
 
-const deleteDevice = (id) => {
+    
+    const deleteDevice = async (Id) => {
         if (window.confirm("Jeste li sigurni da želite obrisati ovaj uređaj?")) {
-            setDevices(devices.filter(d => d.id !== id));
+            try {
+                await api.delete(`/Article/${Id}`);
+                await fetchData();
+            } catch (error) {
+                console.error("Error deleting device:", error);
+            }
         }
     };
 
-const handleSubmit = (e) => {
+    
+    const handleSubmit = async (e) => {
         e.preventDefault(); 
-        if (!deviceName.trim()) return; 
 
-        if (editId) {
-            setDevices(devices.map(d => 
-                d.id === editId 
-                    ? { ...d, name: deviceName, quantity: Number(deviceQuantity), price: Number(devicePrice) } 
-                    : d
-            ));
-        } else {
-            const newDevice = {
-                id: Date.now(), 
-                name: deviceName,
-                quantity: Number(deviceQuantity),
-                price: Number(devicePrice)
-            };
-            setDevices([...devices, newDevice]); 
-        }
+        if (!deviceName.trim()) return;
+
         
-        closeModal(); 
+        const deviceData = {
+            Name: deviceName,
+            Description: deviceDescription,
+            CurrentPrice: Number(devicePrice),
+            UserId: selectedUserId
+        };
+
+        try {
+            if (editId) {
+                
+                await api.put(`/Article/${editId}`, deviceData);
+            } else {
+                
+                await api.post("/Article", deviceData);
+            }
+            
+            
+            
+            await fetchData(); 
+            closeModal();
+        } catch (error) {
+            console.error("Error updating device:", error);
+        }
     };
 
-return (
+    if (loading) return <p>Učitavam artikle iz baze podataka...</p>;
+
+    return (
         <div className="crud-container">
-            <h1>Device List</h1>
+            <h1>Device List (From Database)</h1>
             
             <button className="btn-add" onClick={() => setIsModalOpen(true)}>
                 Add Device
             </button>
             
-            {/* POP-UP (MODAL) FORM */}
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content">
-                        <span className="close-btn" onClick={() => setIsModalOpen(false)}>&times;</span>
-                        <h3>Add New Device</h3>
+                        <span className="close-btn" onClick={closeModal}>&times;</span>
+                        <h3>{editId ? "Edit Device" : "Add New Device"}</h3>
                         
                         <form onSubmit={handleSubmit}>
                             <div className="form-group">
                                 <label>Device Name:</label>
+                              
                                 <input 
                                     type="text" 
                                     value={deviceName} 
                                     onChange={(e) => setDeviceName(e.target.value)} 
-                                    placeholder="Enter device name..."
                                     required 
                                 />
                                 
+                                <label>Description:</label>
+
+                                <input 
+                                    type="text" 
+                                    value={deviceDescription} 
+                                    onChange={(e) => setDeviceDescription(e.target.value)} 
+                                />
+                                
                                 <label>Price (€):</label>
+                               
                                 <input 
                                     type="number" 
                                     step="0.01"
                                     value={devicePrice} 
                                     onChange={(e) => setDevicePrice(e.target.value)} 
-                                    placeholder="Enter price..."
                                     required 
                                 />
-                                
-                                <label>Quantity:</label>
-                                <input 
-                                    type="number" 
-                                    value={deviceQuantity} 
-                                    onChange={(e) => setDeviceQuantity(e.target.value)} 
-                                    placeholder="Enter quantity..."
-                                    required 
-                                />
+                                    <div className="form-group">
+                                        <label>Vlasnik uređaja:</label>
+                                        <select 
+                                            value={selectedUserId} 
+                                            onChange={(e) => setSelectedUserId(e.target.value)} 
+                                            required
+                                            disabled={!!editId} // <-- OVO JE KLJUČ! Zaključava izbornik ako uređujemo (editId postoji)
+                                            className="form-control" 
+                                        >
+                                            <option value="">-- Odaberi korisnika --</option>
+                                            {users.map(u => (
+                                                <option key={u.Id || u.id} value={u.Id || u.id}>
+                                                    {u.FirstName || u.firstName} {u.LastName || u.lastName}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
                             </div>
                             <button type="submit" className="btn-save">Save Device</button>
                         </form>
                     </div>
                 </div>
             )}
+
             <table className="device-table">
                 <thead>
                     <tr>
                         <th>Naziv uređaja</th>
-                        <th>Količina</th>
+                        <th>Opis</th>
                         <th>Cijena</th>
                         <th>Akcije</th> 
                     </tr>
                 </thead>
-                <tbody>
-                    {devices.map(u => (
-                        <tr key={u.id}>
-                            <td className="name-cell">{u.name}</td>
-                            <td>{u.quantity} kom</td>
-                            <td className="price-cell">{u.price} €</td>
-                            <td className="actions-cell">
-                                <button className="btn-table-edit" onClick={() => startEdit(u)}>Edit</button>
-                                <button className="btn-table-delete" onClick={() => deleteDevice(u.id)}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
+                    <tbody>
+                        {devices.map((u, index) => (
+                            <tr key={u.Id || u.id || index}>
+                                <td className="name-cell">{u.Name || u.name}</td>
+                                <td>{u.Description || u.description || "Nema opisa"}</td>
+                                <td className="price-cell">{u.CurrentPrice || u.currentPrice} €</td>
+                                
+                                <td className="actions-cell">
+                                    <button className="btn-table-edit" onClick={() => startEdit(u)}>Edit</button>
+                                    <button className="btn-table-delete" onClick={() => deleteDevice(u.Id || u.id)}>Delete</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
             </table>
         </div>
     );
